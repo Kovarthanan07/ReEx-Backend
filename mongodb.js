@@ -22,7 +22,7 @@ MongoClient.connect(
       },
       (error, result) => {
         if (error) {
-          return console.log("Unable to insert ... ");
+          return console.log("Un able to insert ... ");
         }
         console.log(result.ops);
       }
