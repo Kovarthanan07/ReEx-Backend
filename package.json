@@ -4,11 +4,16 @@
   "description": "Receipt and Expense Management System",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "dev":"nodemon src/index.js"
   },
   "author": "The NANs",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^3.6.4"
+    "express": "^4.17.1",
+    "mongodb": "^3.6.4",
+    "mongoose": "^5.11.15",
+    "nodemon": "^2.0.7",
+    "validator": "^13.5.2"
   }
 }
