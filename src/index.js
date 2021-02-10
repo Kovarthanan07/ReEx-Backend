@@ -1,12 +1,14 @@
 const express = require("express");
+require("./db/mongoose");
+const userRouter = require("./routers/user");
+const bankDetailRouter = require("./routers/bankDetail");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.post("/users", (req, res) => {
-  res.send("Testing ... ");
-});
+app.use(userRouter);
+app.use(bankDetailRouter);
 
 app.listen(port, () => {
   console.log("Server is up on port " + port);
