@@ -7,6 +7,11 @@ const BankDetail = mongoose.model("BankDetail", {
     required: true,
   },
 
+  createdOn: {
+    type: Date,
+    default: Date.now(),
+  },
+
   branch: {
     required: true,
     type: String,
