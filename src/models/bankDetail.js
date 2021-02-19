@@ -1,26 +1,33 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const BankDetail = mongoose.model("BankDetail", {
-  bank: {
-    type: String,
-    required: true,
-  },
+const bankDetailSchema = new mongoose.Schema(
+  {
+    bank: {
+      type: String,
+      required: true,
+    },
 
-  createdOn: {
-    type: Date,
-    default: Date.now(),
-  },
+    branch: {
+      required: true,
+      type: String,
+    },
 
-  branch: {
-    required: true,
-    type: String,
+    accountNumber: {
+      type: String,
+      required: true,
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
   },
+  {
+    timestamps: true,
+  }
+);
 
-  accountNumber: {
-    type: String,
-    required: true,
-  },
-});
+const BankDetail = mongoose.model("BankDetail", bankDetailSchema);
 
 module.exports = BankDetail;

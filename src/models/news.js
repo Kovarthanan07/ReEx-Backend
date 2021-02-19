@@ -7,11 +7,6 @@ const News = mongoose.model("News", {
     type: String,
   },
 
-  forWhom: {
-    type: String,
-    required: true,
-  },
-
   postedOn: {
     type: Date.now(),
     required: true,
