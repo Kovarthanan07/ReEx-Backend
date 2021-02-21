@@ -1,20 +1,46 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const News = mongoose.model("News", {
-  title: {
-    required: true,
-    type: String,
-  },
+const newsSchema = new mongoose.Schema(
+  {
+    title: {
+      required: true,
+      type: String,
+    },
 
-  postedOn: {
-    type: Date.now(),
-    required: true,
-  },
+    startDisplayOn: {
+      type: Date,
+      default: Date.now,
+      required: true,
+    },
 
-  news: {
-    type: String,
+    endDisplayOn: {
+      type: Date,
+      required: true,
+    },
+
+    viewers: [
+      {
+        type: String,
+        default: ["employee", "manager", "admin"],
+      },
+    ],
+
+    news: {
+      type: String,
+    },
+
+    postedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
   },
-});
+  {
+    timestamps: true,
+  }
+);
+
+const News = mongoose.model("News", newsSchema);
 
 module.exports = News;

@@ -80,6 +80,24 @@ userSchema.virtual("bankDetails", {
   foreignField: "owner",
 });
 
+userSchema.virtual("news", {
+  ref: "News",
+  localField: "_id",
+  foreignField: "postedBy",
+});
+
+userSchema.virtual("topUpRequest", {
+  ref: "TopUpRequest",
+  localField: "_id",
+  foreignField: "requestBy",
+});
+
+// userSchema.virtual("topUpRequest", {
+//   ref: "TopUpRequest",
+//   localField: "_id",
+//   foreignField: "requestTo",
+// });
+
 userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
