@@ -54,27 +54,30 @@ router.patch(
   }
 );
 
-router.get("/topUpRequest", [auth.authUser], async (req, res) => {
-  try {
-    // await req.user.populate("topUpRequest").execPopulate();
-    // res.send(req.user.topUpRequest);
-    const role = req.user.role;
-    if (role === "employee") {
-      const requests = await News.find({
-        requestBy: req.user._id,
-      });
-      res.send(requests);
+router.get(
+  "/topUpRequestSended",
+  [auth.authUser, auth.isEmployee],
+  async (req, res) => {
+    try {
+      await req.user.populate("topUpRequestSended").execPopulate();
+      res.send(req.user.topUpRequestSended);
+    } catch (e) {
+      res.status(500).send();
     }
-
-    if (role === "manager") {
-      const requests = await News.find({
-        requestTo: req.user._id,
-      });
-      res.send(requests);
-    }
-  } catch (e) {
-    res.status(500).send();
   }
-});
+);
+
+router.get(
+  "/topUpRequestReceived",
+  [auth.authUser, auth.isManager],
+  async (req, res) => {
+    try {
+      await req.user.populate("topUpRequestReceived").execPopulate();
+      res.send(req.user.topUpRequestReceived);
+    } catch (e) {
+      res.status(500).send();
+    }
+  }
+);
 
 module.exports = router;

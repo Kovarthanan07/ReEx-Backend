@@ -86,17 +86,41 @@ userSchema.virtual("news", {
   foreignField: "postedBy",
 });
 
-userSchema.virtual("topUpRequest", {
+userSchema.virtual("topUpRequestSended", {
   ref: "TopUpRequest",
   localField: "_id",
   foreignField: "requestBy",
 });
 
-// userSchema.virtual("topUpRequest", {
-//   ref: "TopUpRequest",
-//   localField: "_id",
-//   foreignField: "requestTo",
-// });
+userSchema.virtual("topUpRequestReceived", {
+  ref: "TopUpRequest",
+  localField: "_id",
+  foreignField: "requestTo",
+});
+
+userSchema.virtual("transactionIncharge", {
+  ref: "Transaction",
+  localField: "_id",
+  foreignField: "managerIncharge",
+});
+
+userSchema.virtual("transactionMade", {
+  ref: "Transaction",
+  localField: "_id",
+  foreignField: "transactionBy",
+});
+
+userSchema.virtual("reimbursementBy", {
+  ref: "CashReimbursement",
+  localField: "_id",
+  foreignField: "reimbursementBy",
+});
+
+userSchema.virtual("reimbursementTo", {
+  ref: "CashReimbursement",
+  localField: "_id",
+  foreignField: "reimbursementTo",
+});
 
 userSchema.methods.toJSON = function () {
   const user = this;

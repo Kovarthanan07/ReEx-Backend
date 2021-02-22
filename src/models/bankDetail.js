@@ -28,6 +28,12 @@ const bankDetailSchema = new mongoose.Schema(
   }
 );
 
+bankDetailSchema.virtual("reimbursementAccount", {
+  ref: "CashReimbursement",
+  localField: "_id",
+  foreignField: "reimbursementAccount",
+});
+
 const BankDetail = mongoose.model("BankDetail", bankDetailSchema);
 
 module.exports = BankDetail;
