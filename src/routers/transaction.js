@@ -14,16 +14,16 @@ router.post(
     });
 
     try {
-      await transaction.save();
       if (transaction.paymentMethod === "Own Cash") {
         const cashReimbursement = new CashReimbursement({
           transactionId: transaction._id,
           amount: transaction.amount,
-          ReimbursmentBy: transaction.managerIncharge,
-          ReimbursmentTo: transaction.transactionBy,
+          reimbursementBy: transaction.managerIncharge,
+          reimbursementTo: transaction.transactionBy,
         });
         await cashReimbursement.save();
       }
+      await transaction.save();
       res.status(201).send(transaction);
     } catch (e) {
       res.status(400).send(e);

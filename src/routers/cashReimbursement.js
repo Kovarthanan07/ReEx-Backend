@@ -38,4 +38,30 @@ router.patch(
   }
 );
 
+router.get(
+  "/reimbursementTo",
+  [auth.authUser, auth.isEmployee],
+  async (req, res) => {
+    try {
+      await req.user.populate("reimbursementTo").execPopulate();
+      res.send(req.user.reimbursementTo);
+    } catch (e) {
+      res.status(500).send();
+    }
+  }
+);
+
+router.get(
+  "/reimbursementBy",
+  [auth.authUser, auth.isManager],
+  async (req, res) => {
+    try {
+      await req.user.populate("reimbursementBy").execPopulate();
+      res.send(req.user.reimbursementBy);
+    } catch (e) {
+      res.status(500).send();
+    }
+  }
+);
+
 module.exports = router;
