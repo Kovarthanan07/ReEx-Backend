@@ -90,4 +90,50 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+const upload = multer({
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload an image"));
+    }
+
+    cb(undefined, true);
+  },
+});
+
+router.post(
+  "/users/me/profilePicture",
+  auth.authUser,
+  upload.single("profilePicture"),
+  async (req, res) => {
+    req.user.profilePicture = req.file.buffer;
+    await req.user.save();
+    res.send();
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+router.delete("/users/me/profilePicture", auth.authUser, async (req, res) => {
+  req.user.profilePicture = undefined;
+  await req.user.save();
+  res.send();
+});
+
+router.get("/users/:id/profilePicture", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.profilePicture) {
+      throw new Error();
+    }
+    res.set("Content-Type", "image/jpg");
+    res.send(user.profilePicture);
+  } catch (error) {
+    res.status(400).send();
+  }
+});
+
 module.exports = router;

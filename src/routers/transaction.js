@@ -1,16 +1,32 @@
 const express = require("express");
+const multer = require("multer");
 const auth = require("../middleware/auth");
 const Transaction = require("../models/transaction");
 const CashReimbursement = require("../models/cashReimbursement");
 const router = new express.Router();
 
+const upload = multer({
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload an image"));
+    }
+
+    cb(undefined, true);
+  },
+});
+
 router.post(
   "/transaction",
   [auth.authUser, auth.isEmployee],
+  upload.single("receiptImage"),
   async (req, res) => {
     const transaction = new Transaction({
       ...req.body,
       transactionBy: req.user._id,
+      receiptImage: req.file.buffer,
     });
 
     try {
@@ -89,5 +105,20 @@ router.patch(
     }
   }
 );
+
+// view Receipt
+
+// router.get("/transaction/:id/receiptImage", async (req, res) => {
+//   try {
+//     const transaction = await Transaction.findById(req.params.id);
+//     if (!transaction || !transaction.receiptImage) {
+//       throw new Error();
+//     }
+//     res.set("Content-Type", "image/jpg");
+//     res.send(transaction.receiptImage);
+//   } catch (error) {
+//     res.status(400).send();
+//   }
+// });
 
 module.exports = router;

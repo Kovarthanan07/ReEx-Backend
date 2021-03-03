@@ -42,6 +42,11 @@ const transactionSchema = new mongoose.Schema(
       ref: "User",
     },
 
+    receiptImage: {
+      type: Buffer,
+      required: true,
+    },
+
     transactionBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
