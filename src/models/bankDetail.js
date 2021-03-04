@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-//Schema
 const bankDetailSchema = new mongoose.Schema(
   {
     bank: {
