@@ -1,36 +1,29 @@
-const express = require("express");
-const multer = require("multer");
-const auth = require("../middleware/auth");
-const Transaction = require("../models/transaction");
-const CashReimbursement = require("../models/cashReimbursement");
+const express = require('express');
+const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb');
+const multer = require('multer');
+const auth = require('../middleware/auth');
+const Transaction = require('../models/transaction');
+const CashReimbursement = require('../models/cashReimbursement');
 const router = new express.Router();
 
-const upload = multer({
-  limits: {
-    fileSize: 1000000,
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("Please upload an image"));
-    }
-
-    cb(undefined, true);
-  },
-});
-
 router.post(
-  "/transaction",
+  '/transaction',
   [auth.authUser, auth.isEmployee],
-  upload.single("receiptImage"),
   async (req, res) => {
     const transaction = new Transaction({
-      ...req.body,
+      managerIncharge: mongoose.Types.ObjectId(req.body.managerIncharge),
+      category: req.body.category,
+      paymentMethod: req.body.paymentMethod,
+      amount: parseInt(req.body.amount),
+      description: req.body.description,
+      transactionDate: Date.parse(req.body.transactionDate),
+      receiptUrl: req.body.receiptUrl,
       transactionBy: req.user._id,
-      receiptImage: req.file.buffer,
     });
 
     try {
-      if (transaction.paymentMethod === "Own Cash") {
+      if (transaction.paymentMethod === 'Own Cash') {
         const cashReimbursement = new CashReimbursement({
           transactionId: transaction._id,
           amount: transaction.amount,
@@ -48,11 +41,11 @@ router.post(
 );
 
 router.get(
-  "/transactionMade",
+  '/transactionMade',
   [auth.authUser, auth.isEmployee],
   async (req, res) => {
     try {
-      await req.user.populate("transactionMade").execPopulate();
+      await req.user.populate('transactionMade').execPopulate();
       res.send(req.user.transactionMade);
     } catch (e) {
       res.status(500).send();
@@ -61,11 +54,11 @@ router.get(
 );
 
 router.get(
-  "/transactionIncharge",
+  '/transactionIncharge',
   [auth.authUser, auth.isManager],
   async (req, res) => {
     try {
-      await req.user.populate("transactionIncharge").execPopulate();
+      await req.user.populate('transactionIncharge').execPopulate();
       res.send(req.user.transactionIncharge);
     } catch (e) {
       res.status(500).send();
@@ -74,17 +67,17 @@ router.get(
 );
 
 router.patch(
-  "/transaction/:id",
+  '/transaction/:id',
   [auth.authUser, auth.isManager],
   async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ["status"];
+    const allowedUpdates = ['status'];
     const isValidOperation = updates.every((update) =>
       allowedUpdates.includes(update)
     );
 
     if (!isValidOperation) {
-      return res.status(400).send({ error: "Invalid updates!" });
+      return res.status(400).send({ error: 'Invalid updates!' });
     }
 
     try {
@@ -122,3 +115,4 @@ router.patch(
 // });
 
 module.exports = router;
+

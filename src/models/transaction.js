@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+const mongoose = require('mongoose');
+const validator = require('validator');
 
 const transactionSchema = new mongoose.Schema(
   {
@@ -10,15 +10,15 @@ const transactionSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      default: "Pending",
+      default: 'Pending',
       required: true,
-      enum: ["Pending", "Rejected", "Approved"],
+      enum: ['Pending', 'Rejected', 'Approved'],
     },
 
     category: {
       type: String,
       required: true,
-      enum: ["Travel", "Food", "Hotel", "Other"],
+      enum: ['Travel', 'Food', 'Hotel', 'Other'],
     },
 
     description: {
@@ -33,24 +33,24 @@ const transactionSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
-      enum: ["Own Cash", "Card Provided"],
+      enum: ['Own Cash', 'Card Provided'],
     },
 
     managerIncharge: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
 
-    receiptImage: {
-      type: Buffer,
+    receiptUrl: {
+      type: String,
       required: true,
     },
 
     transactionBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
   },
   {
@@ -58,12 +58,13 @@ const transactionSchema = new mongoose.Schema(
   }
 );
 
-transactionSchema.virtual("transactionId", {
-  ref: "CashReimbursement",
-  localField: "_id",
-  foreignField: "transactionId",
+transactionSchema.virtual('transactionId', {
+  ref: 'CashReimbursement',
+  localField: '_id',
+  foreignField: 'transactionId',
 });
 
-const Transaction = mongoose.model("Transaction", transactionSchema);
+const Transaction = mongoose.model('Transaction', transactionSchema);
 
 module.exports = Transaction;
+
