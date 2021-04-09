@@ -33,7 +33,7 @@ const transactionSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
-      enum: ['Own Cash', 'Card Provided'],
+      enum: ['Cash', 'Card'],
     },
 
     managerIncharge: {
@@ -67,4 +67,3 @@ transactionSchema.virtual('transactionId', {
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
 module.exports = Transaction;
-

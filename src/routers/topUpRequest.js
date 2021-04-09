@@ -1,14 +1,17 @@
-const express = require("express");
-const auth = require("../middleware/auth");
-const TopUpRequest = require("../models/topUpRequest");
+const express = require('express');
+const auth = require('../middleware/auth');
+const mongoose = require('mongoose');
+const TopUpRequest = require('../models/topUpRequest');
 const router = new express.Router();
 
 router.post(
-  "/topUpRequest",
+  '/topUpRequest',
   [auth.authUser, auth.isEmployee],
   async (req, res) => {
     const topUpRequest = new TopUpRequest({
-      ...req.body,
+      requestTo: mongoose.Types.ObjectId(req.body.requestTo),
+      description: req.body.description,
+      amount: parseInt(req.body.amount),
       requestBy: req.user._id,
     });
 
@@ -22,17 +25,17 @@ router.post(
 );
 
 router.patch(
-  "/topUpRequest/:id",
+  '/topUpRequest/:id',
   [auth.authUser, auth.isManager],
   async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ["status"];
+    const allowedUpdates = ['status'];
     const isValidOperation = updates.every((update) =>
       allowedUpdates.includes(update)
     );
 
     if (!isValidOperation) {
-      return res.status(400).send({ error: "Invalid updates!" });
+      return res.status(400).send({ error: 'Invalid updates!' });
     }
 
     try {
@@ -55,11 +58,11 @@ router.patch(
 );
 
 router.get(
-  "/topUpRequestSended",
+  '/topUpRequestSended',
   [auth.authUser, auth.isEmployee],
   async (req, res) => {
     try {
-      await req.user.populate("topUpRequestSended").execPopulate();
+      await req.user.populate('topUpRequestSended').execPopulate();
       res.send(req.user.topUpRequestSended);
     } catch (e) {
       res.status(500).send();
@@ -68,11 +71,11 @@ router.get(
 );
 
 router.get(
-  "/topUpRequestReceived",
+  '/topUpRequestReceived',
   [auth.authUser, auth.isManager],
   async (req, res) => {
     try {
-      await req.user.populate("topUpRequestReceived").execPopulate();
+      await req.user.populate('topUpRequestReceived').execPopulate();
       res.send(req.user.topUpRequestReceived);
     } catch (e) {
       res.status(500).send();

@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+const mongoose = require('mongoose');
+const validator = require('validator');
 
 const cashReimbursementSchema = new mongoose.Schema(
   {
@@ -10,32 +10,33 @@ const cashReimbursementSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      default: "Pending",
+      default: 'Pending',
       required: true,
-      enum: ["Pending", "Done", "Cancelled"],
+      enum: ['Pending', 'Done', 'Cancelled'],
     },
 
     reimbursementBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
 
     reimbursementAccount: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "BankDetail",
+      default: null,
+      ref: 'BankDetail',
     },
 
     reimbursementTo: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
 
     transactionId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Transaction",
+      ref: 'Transaction',
     },
   },
   {
@@ -44,7 +45,7 @@ const cashReimbursementSchema = new mongoose.Schema(
 );
 
 const CashReimbursement = mongoose.model(
-  "CashReimbursement",
+  'CashReimbursement',
   cashReimbursementSchema
 );
 

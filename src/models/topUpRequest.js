@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+const mongoose = require('mongoose');
+const validator = require('validator');
 
 const topUpRequestSchema = new mongoose.Schema(
   {
@@ -8,23 +8,27 @@ const topUpRequestSchema = new mongoose.Schema(
       type: Number,
     },
 
+    description: {
+      type: String,
+    },
+
     status: {
       type: String,
-      default: "Not Approved",
+      default: 'Pending',
       required: true,
-      enum: ["Not Approved", "Approved"],
+      enum: ['Pending', 'Rejected', 'Approved'],
     },
 
     requestTo: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
 
     requestBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
   },
   {
@@ -32,6 +36,6 @@ const topUpRequestSchema = new mongoose.Schema(
   }
 );
 
-const TopUpRequest = mongoose.model("TopUpRequest", topUpRequestSchema);
+const TopUpRequest = mongoose.model('TopUpRequest', topUpRequestSchema);
 
 module.exports = TopUpRequest;
