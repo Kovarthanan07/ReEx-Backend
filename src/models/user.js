@@ -90,6 +90,12 @@ userSchema.virtual('reportsReceiver', {
   foreignField: 'receiver',
 });
 
+userSchema.virtual('cardDetails', {
+  ref: 'CardDetail',
+  localField: '_id',
+  foreignField: 'holder',
+});
+
 userSchema.virtual('bankDetails', {
   ref: 'BankDetail',
   localField: '_id',

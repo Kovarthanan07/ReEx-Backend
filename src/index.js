@@ -10,6 +10,7 @@ const transactionRouter = require('./routers/transaction');
 const cashReimbursementRouter = require('./routers/cashReimbursement');
 const testingRouter = require('./routers/testing');
 const reportRouter = require('./routers/report');
+const cardDetailRouter = require('./routers/cardDetail');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(testingRouter);
 app.use(userRouter);
 app.use(bankDetailRouter);
+app.use(cardDetailRouter);
 app.use(newsRouter);
 app.use(topUpRequestRouter);
 app.use(transactionRouter);

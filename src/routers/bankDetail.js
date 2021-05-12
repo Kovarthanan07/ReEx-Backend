@@ -1,10 +1,10 @@
-const express = require("express");
-const auth = require("../middleware/auth");
-const BankDetail = require("../models/bankDetail");
+const express = require('express');
+const auth = require('../middleware/auth');
+const BankDetail = require('../models/bankDetail');
 const router = new express.Router();
 
 router.post(
-  "/bankDetail",
+  '/bankDetail',
   [auth.authUser, auth.isEmployeeOrManager],
   async (req, res) => {
     const bankDetail = new BankDetail({
@@ -21,24 +21,24 @@ router.post(
   }
 );
 
-router.get("/bankDetail", [auth.authUser], async (req, res) => {
+router.get('/bankDetail', [auth.authUser], async (req, res) => {
   try {
-    await req.user.populate("bankDetails").execPopulate();
+    await req.user.populate('bankDetails').execPopulate();
     res.send(req.user.bankDetails);
   } catch (e) {
     res.status(500).send();
   }
 });
 
-router.patch("/bankDetail/:id", [auth.authUser], async (req, res) => {
+router.patch('/bankDetail/:id', [auth.authUser], async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["bank", "branch", "accountNumber"];
+  const allowedUpdates = ['bank', 'branch', 'accountNumber'];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
 
   if (!isValidOperation) {
-    return res.status(400).send({ error: "Invalid updates!" });
+    return res.status(400).send({ error: 'Invalid updates!' });
   }
 
   try {
@@ -59,7 +59,16 @@ router.patch("/bankDetail/:id", [auth.authUser], async (req, res) => {
   }
 });
 
-router.delete("/bankDetail/:id", [auth.authUser], async (req, res) => {
+router.get('/allBankDetails', [auth.authUser], async (req, res) => {
+  try {
+    const allBankDetails = await BankDetail.find({});
+    res.send(allBankDetails);
+  } catch (error) {
+    res.status(400).send();
+  }
+});
+
+router.delete('/bankDetail/:id', [auth.authUser], async (req, res) => {
   try {
     const bankDetail = await BankDetail.findOneAndDelete({
       _id: req.params.id,

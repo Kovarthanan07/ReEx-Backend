@@ -66,6 +66,30 @@ router.get(
   }
 );
 
+router.get('/allTransactions', [auth.authUser], async (req, res) => {
+  try {
+    const allTransactions = await Transaction.find({});
+    res.send(allTransactions);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.get(
+  '/transactionsBy/:userid',
+  [auth.authUser, auth.isAdmin],
+  async (req, res) => {
+    try {
+      const allTransactions = await Transaction.find({
+        transactionBy: req.params.userid,
+      });
+      res.send(allTransactions);
+    } catch (e) {
+      res.status(500).send();
+    }
+  }
+);
+
 router.patch(
   '/transaction/:id',
   [auth.authUser, auth.isManager],
@@ -98,20 +122,5 @@ router.patch(
     }
   }
 );
-
-// view Receipt
-
-// router.get("/transaction/:id/receiptImage", async (req, res) => {
-//   try {
-//     const transaction = await Transaction.findById(req.params.id);
-//     if (!transaction || !transaction.receiptImage) {
-//       throw new Error();
-//     }
-//     res.set("Content-Type", "image/jpg");
-//     res.send(transaction.receiptImage);
-//   } catch (error) {
-//     res.status(400).send();
-//   }
-// });
 
 module.exports = router;

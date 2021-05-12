@@ -1,11 +1,19 @@
 const express = require('express');
 const multer = require('multer');
 const User = require('../models/user');
+const CardDetail = require('../models/cardDetail');
 const router = express.Router();
 const auth = require('../middleware/auth');
 
 router.post('/users', [auth.authUser, auth.isAdmin], async (req, res) => {
   const user = new User(req.body);
+  console.log(user.role);
+  if (user.role === 'employee') {
+    const cardDetail = new CardDetail({
+      holder: user._id,
+    });
+    await cardDetail.save();
+  }
   try {
     await user.save();
     res.status(201).send(user);
@@ -68,10 +76,23 @@ router.get('/getalladmin', [auth.authUser], async (req, res) => {
   }
 });
 
+router.get(
+  '/user/:userId',
+  [auth.authUser, auth.isAdminOrManager],
+  async (req, res) => {
+    try {
+      const user = await User.find({ userId: req.params.userId });
+      res.send(user);
+    } catch (error) {
+      res.status(400).send();
+    }
+  }
+);
+
 router.get('/getallusers', [auth.authUser], async (req, res) => {
   try {
-    const users = await User.find({});
-    res.send(users);
+    const allUsers = await User.find({});
+    res.send(allUsers);
   } catch (error) {
     res.status(400).send();
   }
@@ -114,6 +135,22 @@ router.delete('/users/me', [auth.authUser, auth.isAdmin], async (req, res) => {
   }
 });
 
+router.delete('/users/:id', [auth.authUser, auth.isAdmin], async (req, res) => {
+  try {
+    const user = await User.findOneAndDelete({
+      _id: req.params.id,
+    });
+
+    if (!user) {
+      return res.status(404).send();
+    }
+
+    res.send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 router.post('/users/login', async (req, res) => {
   try {
     const user = await User.findByCredentials(
@@ -126,19 +163,6 @@ router.post('/users/login', async (req, res) => {
     res.status(400).send();
   }
 });
-
-// const upload = multer({
-//   limits: {
-//     fileSize: 1000000,
-//   },
-//   fileFilter(req, file, cb) {
-//     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-//       return cb(new Error('Please upload an image'));
-//     }
-
-//     cb(undefined, true);
-//   },
-// });
 
 router.post(
   '/users/me/profilePicture',
@@ -165,11 +189,42 @@ router.get('/users/:id/profilePicture', async (req, res) => {
     if (!user || !user.profilePictureUrl) {
       throw new Error();
     }
-    // res.set('Content-Type', 'image/jpg');
     res.send(user.profilePictureUrl);
   } catch (error) {
     res.status(400).send();
   }
 });
+
+router.patch(
+  '/userUpdate/:id',
+  [auth.authUser, auth.isAdmin],
+  async (req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['role', 'userId', 'password'];
+    const isValidOperation = updates.every((update) =>
+      allowedUpdates.includes(update)
+    );
+
+    if (!isValidOperation) {
+      return res.status(400).send({ error: 'Invalid updates!' });
+    }
+
+    try {
+      const user = await User.findOne({
+        _id: req.params.id,
+      });
+
+      if (!user) {
+        return res.status(404).send();
+      }
+
+      updates.forEach((update) => (user[update] = req.body[update]));
+      await user.save();
+      res.send(user);
+    } catch (e) {
+      res.status(400).send(e);
+    }
+  }
+);
 
 module.exports = router;

@@ -71,6 +71,19 @@ router.get(
 );
 
 router.get(
+  '/allTopUpRequests',
+  [auth.authUser, auth.isAdminOrManager],
+  async (req, res) => {
+    try {
+      const allTopUprequests = await TopUpRequest.find({});
+      res.send(allTopUprequests);
+    } catch (e) {
+      res.status(500).send();
+    }
+  }
+);
+
+router.get(
   '/topUpRequestReceived',
   [auth.authUser, auth.isManager],
   async (req, res) => {

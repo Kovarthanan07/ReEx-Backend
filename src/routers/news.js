@@ -1,9 +1,9 @@
-const express = require("express");
-const auth = require("../middleware/auth");
-const News = require("../models/news");
+const express = require('express');
+const auth = require('../middleware/auth');
+const News = require('../models/news');
 const router = new express.Router();
 
-router.post("/news", [auth.authUser, auth.isAdmin], async (req, res) => {
+router.post('/news', [auth.authUser, auth.isAdmin], async (req, res) => {
   const news = new News({
     ...req.body,
     postedBy: req.user._id,
@@ -17,21 +17,21 @@ router.post("/news", [auth.authUser, auth.isAdmin], async (req, res) => {
   }
 });
 
-router.patch("/news/:id", [auth.authUser, auth.isAdmin], async (req, res) => {
+router.patch('/news/:id', [auth.authUser, auth.isAdmin], async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = [
-    "viewers",
-    "title",
-    "news",
-    "startDisplayOn",
-    "endDisplayOn",
+    'viewers',
+    'title',
+    'news',
+    'startDisplayOn',
+    'endDisplayOn',
   ];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
 
   if (!isValidOperation) {
-    return res.status(400).send({ error: "Invalid updates!" });
+    return res.status(400).send({ error: 'Invalid updates!' });
   }
 
   try {
@@ -52,7 +52,7 @@ router.patch("/news/:id", [auth.authUser, auth.isAdmin], async (req, res) => {
   }
 });
 
-router.delete("/news/:id", [auth.authUser, auth.isAdmin], async (req, res) => {
+router.delete('/news/:id', [auth.authUser, auth.isAdmin], async (req, res) => {
   try {
     const news = await News.findOneAndDelete({
       _id: req.params.id,
@@ -69,28 +69,26 @@ router.delete("/news/:id", [auth.authUser, auth.isAdmin], async (req, res) => {
   }
 });
 
-router.get("/news", [auth.authUser], async (req, res) => {
+router.get('/news', [auth.authUser], async (req, res) => {
   try {
     const role = req.user.role;
 
-    if (role === "manager") {
+    if (role === 'manager') {
       const wholeNews = await News.find({
-        viewers: { $in: ["manager"] },
+        viewers: { $in: ['manager'] },
       });
       res.send(wholeNews);
     }
 
-    if (role === "employee") {
+    if (role === 'employee') {
       const wholeNews = await News.find({
-        viewers: { $in: ["employee"] },
+        viewers: { $in: ['employee'] },
       });
       res.send(wholeNews);
     }
 
-    if (role === "admin") {
-      const wholeNews = await News.find({
-        viewers: { $in: ["admin"] },
-      });
+    if (role === 'admin') {
+      const wholeNews = await News.find({});
       res.send(wholeNews);
     }
   } catch (e) {
