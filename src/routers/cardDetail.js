@@ -11,7 +11,7 @@ router.get('/cardBalance/:id', [auth.authUser], async (req, res) => {
     res.status(400).send();
   }
 });
-
+//card
 router.patch(
   '/subAmount/:id',
   [auth.authUser, auth.isManager],
